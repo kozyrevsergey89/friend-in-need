@@ -1,6 +1,5 @@
 package com.callisto.friendinneed;
 
-import com.callisto.friendinneed.R;
 import com.callisto.friendinneed.service.SensorService;
 
 import android.appwidget.AppWidgetManager;

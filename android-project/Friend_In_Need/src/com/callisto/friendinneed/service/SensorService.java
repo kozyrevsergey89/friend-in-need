@@ -1,8 +1,5 @@
 package com.callisto.friendinneed.service;
 
-
-
-import com.callisto.friendinneed.R;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +10,6 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 public class SensorService extends Service implements SensorEventListener{
 
@@ -22,8 +18,11 @@ public class SensorService extends Service implements SensorEventListener{
 	private Handler handler;
 	private float x, y, z;
 	private JoltCalculator joltCalculator;
-	private final double G_POINT = 2 * 9.8;
+	private final double G_POINT = 1.3 * 9.8;
 	private int counter = 0;
+	private String[] seconds;
+	private boolean jolt = false;
+	private int checker = 0;
 	
 	@Override
 	public void onCreate() {
@@ -32,6 +31,7 @@ public class SensorService extends Service implements SensorEventListener{
 		accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 		Log.i("Accelerometer:", "onCreate");
+		seconds = new String[7];
 	}
 	
 	
@@ -66,23 +66,44 @@ public class SensorService extends Service implements SensorEventListener{
 
 		@Override
 		public void run() {
-			if(counter == 3) {
-				Log.i("Accelerometer:", "--------- THREE SECONDS LEFT ----------");
-				counter = 0;
+			
+			seconds[counter] = "X:" + x + " Y: " + y + " Z: " + z;
+			
+			if (!jolt) {
+				if (checkForJolt()) {
+					for(String string : seconds) {
+						Log.i("Accelerometer:", "JOLT: "+ string);
+					}
+					counter = 0;
+					jolt = true;
+				}
+				
+			} else {
+				if(!checkLatesSeconds()) { checker++; }
+				Log.i("Accelerometer:", "AFTER_JOLT: "+ checkLatesSeconds() + " -checker: " + checker);
+				if (counter == 6 && checker == 0) { 
+					jolt = false;
+					Log.i("Accelerometer:", "Send json to server");
+					//get gps coords
+					//send json to server
+					//send xml to sms service
+					//set short link
+					checker = 0;
+			    }
 			}
-			if(checkForJolt()) {
-				Log.i("Accelerometer:", "--------- HUSTON WE GOT A PROBLEM ----------");
-				Log.i("Accelerometer:", "JOLT: "+ "X:" + x + " Y: " + y + " Z: " + z + " - " + checkForJolt());
-				Log.i("Accelerometer:", "--------- HUSTON WE GOT A PROBLEM ----------");
+			
+			if (counter == 6) { 
 				counter = 0;
-			}
-			Log.i("Accelerometer:", "TEST: "+ "X:" + x + " Y: " + y + " Z: " + z + " - " + checkForJolt());
+				seconds = new String[7];
+				jolt = false;
+		    }
+			
 			handler.removeCallbacks(this);
-			handler.postDelayed(this, 100);
+			handler.postDelayed(this, 500);
 			counter++;
 		}
 	}
-
+	
 	private boolean checkForJolt() {
 		float sum = (x * y) + (y * y) + (z * z); 
 		double checkVar = Math.sqrt(Double.parseDouble(Float.toString(sum)));
@@ -90,12 +111,23 @@ public class SensorService extends Service implements SensorEventListener{
 		return false;
 	}
 	
+	private boolean checkLatesSeconds() {
+		float sum = (x * y) + (y * y) + (z * z);
+		double checkVar = Math.sqrt(Double.parseDouble(Float.toString(sum)));
+		if (checkVar > 9 || checkVar < 10.5) {
+			return true;
+		}
+		return false;
+	}
+	
+	/*
 	private void shutDown() {
 		Log.i("Accelerometer:", "shut down");
 		handler.removeCallbacks(joltCalculator);
 		sensorManager.unregisterListener(this);
 		stopSelf();
 	}
+	*/
 	
 	@Override
 	public IBinder onBind(final Intent intent) { return null; }
