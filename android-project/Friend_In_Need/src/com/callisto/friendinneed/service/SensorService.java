@@ -107,6 +107,9 @@ public class SensorService extends Service implements SensorEventListener{
 					Log.i("Accelerometer:", "Send json to server");
 					Log.i("Accelerometer:", getDataString());
 					poster.setData(getDataString());
+					String text = getDataString();
+					AndroidFileFunctions aff = new AndroidFileFunctions();
+					aff.writeToFile("superfile.txt", "tets", getApplicationContext(), Context.MODE_WORLD_READABLE);
 					//poster.postData();
 					getGpsLocation();
 					Log.i("Accelerometer:", poster.getGoogleMapString());
@@ -163,3 +166,4 @@ public class SensorService extends Service implements SensorEventListener{
 	
 	
 }
+
