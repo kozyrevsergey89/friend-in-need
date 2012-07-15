@@ -24,21 +24,21 @@ def make_training_data():
     for n in xrange(400):
         for klass in range(3):
             input = multivariate_normal(means[klass],cov[klass])
-            if n==3 and klass == 2:
-                print input
+            #if n==3 and klass == 2:
+             #   print input
             alldata.addSample(input, [klass])
     alldata.addSample(sg_train_ds(), 0)
     return alldata
 
 
-def set_testing_data():
+def set_testing_data(data=[0.13,0.888]):
     tstdata = ClassificationDataSet(2, 1, nb_classes=3)
-    tstdata.addSample([7.7393,  2.8826], 0)
+    tstdata.addSample(data, 0)
     return tstdata  
 
-def converting_data(trndata, tstdata):
-    trndata._convertToOneOfMany( )
-    tstdata._convertToOneOfMany( )
+#def converting_data(trndata, tstdata):
+ #   trndata._convertToOneOfMany( )
+  #  tstdata._convertToOneOfMany( )
 '''
 print "Number of training patterns: ", len(trndata)
 print "Input and output dimensions: ", trndata.indim, trndata.outdim
@@ -55,7 +55,7 @@ for i in xrange(X.size):
 griddata._convertToOneOfMany()  # this is still needed to make the fnn feel comfy
 '''
 def training_ann(trainer):
-    for i in range(20):
+    for i in range(2):
         trainer.trainEpochs( 1 )
     
 
@@ -64,19 +64,26 @@ def get_percent_error(trainer, tstdata, trndata):
     tstresult = percentError( trainer.testOnClassData(dataset=tstdata ), tstdata['class'] )
     return tstresult
 
-
-trndata = make_training_data()
-tstdata = set_testing_data()
-converting_data(trndata, tstdata)
-fnn = buildNetwork( trndata.indim, 5, trndata.outdim, outclass=SoftmaxLayer )
-trainer = BackpropTrainer( fnn, dataset=trndata, momentum=0.1, verbose=True, weightdecay=0.01)
-training_ann(trainer)
-print "  test error: %5.2f%%" % get_percent_error(trainer, tstdata, trndata)
+"""
+trndata1 = make_training_data()
+tstdata1 = set_testing_data()
+trndata1._convertToOneOfMany( )
+tstdata1._convertToOneOfMany( )
+#converting_data(trndata, tstdata)
+fnn1 = buildNetwork( trndata1.indim, 5, trndata1.outdim, outclass=SoftmaxLayer )
+trainer1 = BackpropTrainer( fnn1, dataset=trndata1, momentum=0.1, verbose=True, weightdecay=0.01)
+training_ann(trainer1)
+print "  test error: %5.2f%%" % get_percent_error(trainer1, tstdata1, trndata1)
+print get_percent_error(trainer1, tstdata1, trndata1)
+print tstdata1
+"""
 ''' 
 print "epoch: %4d" % trainer.totalepochs, \
           "  train error: %5.2f%%" % trnresult, \
           "  test error: %5.2f%%" % tstresult
+
 '''
+
 """          
 out = fnn.activateOnDataset(griddata)
 out = out.argmax(axis=1)  # the highest output activation gives the class
