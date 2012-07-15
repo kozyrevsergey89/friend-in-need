@@ -23,6 +23,7 @@ public class SensorService extends Service implements SensorEventListener{
 	private String[] seconds;
 	private boolean jolt = false;
 	private int checker = 0;
+	private Poster poster;
 	
 	@Override
 	public void onCreate() {
@@ -32,6 +33,7 @@ public class SensorService extends Service implements SensorEventListener{
 		sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 		Log.i("Accelerometer:", "onCreate");
 		seconds = new String[7];
+		poster = new Poster();
 	}
 	
 	
@@ -57,17 +59,36 @@ public class SensorService extends Service implements SensorEventListener{
 	
 	@Override
 	public void onDestroy() {
-		sensorManager.unregisterListener(this);
+		shutDown();
 		Log.i("Accelerometer:", "onDestroy");
 		super.onDestroy();
 	}
+	
+	private String getDataString() {
+		String header = "{ data: \"[ ";
+		String footer = " ]\"}";
+		String secondsString = "";
+		for (int i = 0; i < seconds.length; i++) {
+			
+			if (seconds[i] != null && seconds[i].contains("null")) {
+				continue;
+			}
+			
+			if (i != seconds.length - 1) {
+				secondsString += seconds[i] + ",";
+			}
+			secondsString += seconds[i];
+		}
+		return header + secondsString + footer;
+	}
+	
 	
 	private class JoltCalculator implements Runnable {
 
 		@Override
 		public void run() {
 			
-			seconds[counter] = "X:" + x + " Y: " + y + " Z: " + z;
+			seconds[counter] = x + ", " + y + ", " + z;
 			
 			if (!jolt) {
 				if (checkForJolt()) {
@@ -84,8 +105,13 @@ public class SensorService extends Service implements SensorEventListener{
 				if (counter == 6 && checker == 0) { 
 					jolt = false;
 					Log.i("Accelerometer:", "Send json to server");
+					Log.i("Accelerometer:", getDataString());
+					poster.setData(getDataString());
+					//poster.postData();
+					getGpsLocation();
+					Log.i("Accelerometer:", poster.getGoogleMapString());
+					
 					//get gps coords
-					//send json to server
 					//send xml to sms service
 					//set short link
 					checker = 0;
@@ -104,6 +130,10 @@ public class SensorService extends Service implements SensorEventListener{
 		}
 	}
 	
+	private void getGpsLocation() {
+		poster.getGPSCoords(this);
+	}
+	
 	private boolean checkForJolt() {
 		float sum = (x * y) + (y * y) + (z * z); 
 		double checkVar = Math.sqrt(Double.parseDouble(Float.toString(sum)));
@@ -120,14 +150,12 @@ public class SensorService extends Service implements SensorEventListener{
 		return false;
 	}
 	
-	/*
 	private void shutDown() {
 		Log.i("Accelerometer:", "shut down");
 		handler.removeCallbacks(joltCalculator);
 		sensorManager.unregisterListener(this);
 		stopSelf();
 	}
-	*/
 	
 	@Override
 	public IBinder onBind(final Intent intent) { return null; }
