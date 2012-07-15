@@ -1,14 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="horizontal" 
-    android:background="@android:color/white">
-    
-    <Button
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:text="@string/app_name" 
+    android:background="@drawable/frame"
+    android:layout_weight="4"
+    android:gravity="center_vertical">
+
+    <ImageButton
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/poweron"
+        android:layout_weight="1"
+        android:background="@drawable/enable_selector"
         />
+    <ImageButton
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/sos"
+        android:layout_weight="1"
+        android:background="@drawable/sos_selector"
+        />
+    <ImageButton
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/itworks"
+        android:layout_weight="1"
+        android:background="@drawable/itworks_selector"
+        />
+    <ImageButton
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/settings"
+        android:layout_weight="1"
+        android:background="@drawable/settings_selector"
+        />
+    
 
 </LinearLayout>

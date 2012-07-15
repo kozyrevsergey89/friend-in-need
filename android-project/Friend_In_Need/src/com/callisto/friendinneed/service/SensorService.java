@@ -1,5 +1,8 @@
 package com.callisto.friendinneed.service;
 
+
+
+import com.callisto.friendinneed.R;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +13,7 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 public class SensorService extends Service implements SensorEventListener{
 
@@ -95,5 +99,7 @@ public class SensorService extends Service implements SensorEventListener{
 	
 	@Override
 	public IBinder onBind(final Intent intent) { return null; }
+	
+	
 	
 }

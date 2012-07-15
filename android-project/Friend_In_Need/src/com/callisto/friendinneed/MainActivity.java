@@ -1,5 +1,6 @@
 package com.callisto.friendinneed;
 
+import com.callisto.friendinneed.R;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
