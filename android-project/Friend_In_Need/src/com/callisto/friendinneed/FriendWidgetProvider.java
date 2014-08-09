@@ -1,11 +1,10 @@
 package com.callisto.friendinneed;
 
-import com.callisto.friendinneed.service.SensorService;
-
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import com.callisto.friendinneed.service.SensorService;
 
 public class FriendWidgetProvider extends AppWidgetProvider{
 
@@ -14,6 +13,7 @@ public class FriendWidgetProvider extends AppWidgetProvider{
 			final int[] appWidgetIds) {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 		context.startService(new Intent(context, SensorService.class));
-	}
+        //jcjv
+    }
 	
 }
